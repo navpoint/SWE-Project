@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Help</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+
+</head>
+<body>
+
+    <!-- This will insert the navigation bar dynamically -->
+    {% include "navbar.html" %}
+
+    <h1>Help Page</h1>
+    <p>Welcome to the help page. This section will provide guidance on using the app.</p>
+
+    <!-- TODO: Add sections explaining account creation, login, and navigation -->
+
+    <script>
+        // Load the navbar dynamically
+        fetch("navbar.html")
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById("nav-placeholder").innerHTML = data;
+            });
+    </script>
+</body>
+</html>

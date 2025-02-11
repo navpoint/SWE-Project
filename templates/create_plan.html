@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block title %}Create Plan{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <h1>Create a New Plan</h1>
+        <form id="create-plan-form">
+            <div class="form-group">
+                <label for="plan-name">Plan Name</label>
+                <input type="text" id="plan-name" required>
+            </div>
+
+            <div class="form-group">
+                <label for="plan-description">Description</label>
+                <input type="text" id="plan-description">
+            </div>
+
+            <button type="submit">Create Plan</button>
+        </form>
+
+        <p id="status-message" style="color: red;"></p>
+
+        <a href="/dashboard">Back to Dashboard</a>
+    </div>
+
+    <script src="{{ url_for('static', filename='create.js') }}"></script>
+{% endblock %}

@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block title %}Create New Items{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <h1>Create a New Plan</h1>
+        <form id="create-plan-form">
+            <input type="text" id="plan-name" placeholder="Plan Name" required>
+            <input type="text" id="plan-description" placeholder="Plan Description">
+            <button type="submit">Create Plan</button>
+        </form>
+
+        <h1>Create a New Goal</h1>
+        <form id="create-goal-form">
+            <input type="text" id="goal-name" placeholder="Goal Name" required>
+            <input type="number" id="goal-plan-id" placeholder="Plan ID" required>
+            <input type="text" id="goal-description" placeholder="Goal Description">
+            <input type="number" id="goal-target-amount" placeholder="Target Amount">
+            <button type="submit">Create Goal</button>
+        </form>
+
+        <h1>Create a Cash Flow Entry</h1>
+        <form id="create-cashflow-form">
+            <input type="number" id="cashflow-amount" placeholder="Amount" required>
+            <input type="text" id="cashflow-category" placeholder="Category" required>
+            <input type="text" id="cashflow-description" placeholder="Description">
+            <select id="cashflow-type">
+                <option value="income">Income</option>
+                <option value="expense">Expense</option>
+            </select>
+            <input type="text" id="cashflow-frequency" placeholder="Frequency" required>
+            <button type="submit">Create Cash Flow</button>
+        </form>
+    </div>
+
+    <script src="{{ url_for('static', filename='create.js') }}"></script>
+{% endblock %}
