@@ -8,17 +8,23 @@
     <section class="auth">
         <div class="auth-form">
             <h2>Login</h2>
-            <form id="login-form">
+            <!-- Added onsubmit for confirmation -->
+            <form id="login-form" onsubmit="return confirmSubmit('login')">
                 <input type="text" id="login-username" placeholder="Username" required>
                 <input type="password" id="login-password" placeholder="Password" required>
                 <button type="submit">Login</button>
             </form>
             <p id="signup-label">Don't have an account? <a href="#" id="show-signup">Create One</a></p>
+            
         </div>
 
         <div class="auth-form" id="signup-form" style="display: none;">
             <h2>Sign Up</h2>
-            <form id="signup-form-action">
+            <br>Why create an account?
+            <br>Registering with us will allow you to save your goals and track your progress. All of your information is saved on a secure database that is accessible
+            only by your user id!
+            <br><br>
+            <form id="signup-form-action" onsubmit="return confirmSubmit('signup')">
                 <div class="form-group">
                     <label for="signup-firstname">First Name</label>
                     <input type="text" id="signup-firstname" placeholder="First Name" required>
@@ -35,7 +41,7 @@
                 </div>
         
                 <div class="form-group">
-                    <label for="signup-email">Email</label>
+                    <label for="signup-email">Email</label> - The e-mail is only for your account recovery and alerts. We do not use your e-mail for any other purpose.
                     <input type="email" id="signup-email" placeholder="Email" required>
                 </div>
         
@@ -50,7 +56,7 @@
                 </div>
         
                 <div class="form-group">
-                    <label for="signup-dob">Date of Birth</label>
+                    <label for="signup-dob">Date of Birth</label> - Your Date of Birth will only be used for certain calculations that may affect your incomes and abilities as you get older. We do not use this for any other purpose. 
                     <input type="date" id="signup-dob" required>
                 </div>
         
@@ -60,5 +66,27 @@
         </div>
         
     </section>
+
+    <script>
+        // Generic confirmation for both forms
+        function confirmSubmit(formType) {
+            var message = '';
+            if (formType === 'login') {
+                message = "Are you sure you want to log in?";
+            } else if (formType === 'signup') {
+                message = "Are you sure you want to create an account?";
+            }
+            
+            // Display the confirmation dialog
+            var result = confirm(message);
+            
+            // If the user clicks "OK", allow the form submission
+            if (result) {
+                return true;
+            } else {
+                return false; // Prevent form submission if "Cancel"
+            }
+        }
+    </script>
 
 {% endblock %}

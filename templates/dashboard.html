@@ -7,7 +7,7 @@
         <h1>Welcome to Your Dashboard</h1>
 
         <h2>Your Plans</h2>
-        <table id="plans-table">
+        <table id="plans-table" border="1">
             <thead>
                 <tr>
                     <th>Plan Name</th>
@@ -21,10 +21,10 @@
             </tbody>
         </table>
 
-        <a href="/create-plan">Create New Plan</a>
+        <!-- <a href="/create-plan">Create New Plan</a> destroy later -->
 
         <h2>Your Goals</h2>
-        <table id="goals-table">
+        <table id="goals-table" border="1">
             <thead>
                 <tr>
                     <th>Goal Name</th>
@@ -38,12 +38,61 @@
                 </tr>
             </tbody>
         </table>
-
+        <br>
+        <a href="/create-plan">Create New Plan</a> <br>
         <a href="/create-goal">Create New Goal</a>
 
         <br><br>
         <a href="/logout">Log Out</a>
     </div>
 
+    <script>
+        // Assume planId and goalId are passed as context variables from Flask
+        var planId = "{{ plan_id }}";  // Set this dynamically in Flask
+        var goalId = "{{ goal_id }}";  // Set this dynamically in Flask
+
+        // Show undo buttons if a plan or goal was just created
+        if (planId) {
+            document.getElementById('plan-undo-button').style.display = 'block';
+        }
+        if (goalId) {
+            document.getElementById('goal-undo-button').style.display = 'block';
+        }
+
+        // Undo plan creation
+        document.getElementById('undo-plan-button').onclick = function() {
+            fetch('/undo-plan', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ plan_id: planId })
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert(data.message);
+                document.getElementById('plan-undo-button').style.display = 'none';  // Hide the button after deletion
+            })
+            .catch(error => alert('Error: ' + error));
+        };
+
+        // Undo goal creation
+        document.getElementById('undo-goal-button').onclick = function() {
+            fetch('/undo-goal', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ goal_id: goalId })
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert(data.message);
+                document.getElementById('goal-undo-button').style.display = 'none';  // Hide the button after deletion
+            })
+            .catch(error => alert('Error: ' + error));
+        };
+    </script>
+    
     <script src="{{ url_for('static', filename='dashboard.js') }}"></script>
 {% endblock %}

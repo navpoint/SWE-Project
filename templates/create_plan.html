@@ -5,7 +5,11 @@
 {% block content %}
     <div class="container">
         <h1>Create a New Plan</h1>
-        <form id="create-plan-form">
+        <br>
+        Welcome to creating a new plan! Plans are a helpful feature that let you track your financial progress.
+        <br> After creating a plan, you'll be able to add in incomes and expenses and we'll calculate how it will work out for you.
+        
+        <form id="create-plan-form" onsubmit="return confirmSubmit()">
             <div class="form-group">
                 <label for="plan-name">Plan Name</label>
                 <input type="text" id="plan-name" required>
@@ -23,6 +27,20 @@
 
         <a href="/dashboard">Back to Dashboard</a>
     </div>
+
+    <script>
+        function confirmSubmit() {
+            // Display the confirmation dialog
+            var result = confirm("Are you sure you want to create this plan?");
+            
+            // If the user clicks "OK", allow form submission
+            if (result) {
+                return true;  // Form will be submitted
+            } else {
+                return false; // Form submission is prevented
+            }
+        }
+    </script>
 
     <script src="{{ url_for('static', filename='create.js') }}"></script>
 {% endblock %}

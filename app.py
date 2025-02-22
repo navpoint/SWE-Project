@@ -22,6 +22,10 @@ def create_goal_page():
 def help_page():
     return render_template("help.html")
 
+@app.route('/faq')
+def faq():
+    return render_template("faq.html")  # This will render the FAQ page
+
 @app.route('/logout')
 def logout():
     return redirect(url_for("index"))

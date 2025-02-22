@@ -18,6 +18,46 @@ db_config = {
 def get_db_connection():
     return mysql.connector.connect(**db_config)
 
+# Route to Undo Plan Creation
+@app.route('/undo-plan', methods=['POST'])
+def undo_plan():
+    data = request.json
+    plan_id = data.get("plan_id")
+
+    if not plan_id:
+        return jsonify({"error": "Plan ID is required"}), 400
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("DELETE FROM plans WHERE plan_id = %s", (plan_id,))
+    conn.commit()
+
+    cursor.close()
+    conn.close()
+
+    return jsonify({"message": "Plan deleted successfully"}), 200
+
+# Route to Undo Goal Creation
+@app.route('/undo-goal', methods=['POST'])
+def undo_goal():
+    data = request.json
+    goal_id = data.get("goal_id")
+
+    if not goal_id:
+        return jsonify({"error": "Goal ID is required"}), 400
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("DELETE FROM goals WHERE goal_id = %s", (goal_id,))
+    conn.commit()
+
+    cursor.close()
+    conn.close()
+
+    return jsonify({"message": "Goal deleted successfully"}), 200
+
 # Route to Get All Plans
 @app.route('/plans', methods=['GET'])
 def get_plans():

@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+
+{% block title %}FAQ - Finance & Habit Tracker{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <h1>Frequently Asked Questions (FAQ)</h1>
+
+        <div class="table-of-contents" id="section1">
+            <h2>Table of Contents</h2>
+            <ul>
+                <li><a href="#section1">Section 1: Login</a></li>
+                <li><a href="#section2">Section 2: Plans</a></li>
+                <li><a href="#section3">Section 3: Goals</a></li>
+            </ul>
+        </div>
+
+        <!-- Section 1: Login -->
+        <section id="section1">
+            <h2>Section 1: Login</h2>
+            <ol>
+                <li><a href="#q1">How to create a login</a></li>
+                <li><a href="#q2">Why create a login</a></li>
+                <li><a href="#q3">How to log in</a></li>
+            </ol>
+
+            <div id="q1">
+                <h3>1. How to create a login</h3>
+                <p>To create a login, navigate to the login page and enter your username and password. After submitting, you'll be asked to confirm your account. If you don't have an account, you can create one by clicking the 'Create One' button.</p>
+                <a href="#section1">Return to Top</a> | <a href="{{ url_for('index') }}">Go to Login</a>
+
+            </div>
+
+            <div id="q2">
+                <h3>2. Why create a login</h3>
+                <p>Creating a login allows you to track your progress, save your goals, and access personalized features in the system. It's essential for managing and keeping track of your financial and habit-building progress.</p>
+                <a href="#section1">Return to Top</a> | <a href="{{ url_for('index') }}">Go to Login</a>
+
+            </div>
+
+            <div id="q3">
+                <h3>3. How to log in</h3>
+                <p>To log in, enter your registered username and password on the login page. If your credentials are correct, you'll be directed to your dashboard where you can view your plans and goals.</p>
+                <a href="#section1">Return to Top</a> | <a href="{{ url_for('index') }}">Go to Login</a>
+
+            </div>
+        </section>
+
+        <!-- Section 2: Plans -->
+        <section id="section2">
+            <h2>Section 2: Plans</h2>
+            <ol>
+                <li><a href="#q4">How to create a plan</a></li>
+                <li><a href="#q5">Why create a plan</a></li>
+                <li><a href="#q6">What can a plan do</a></li>
+            </ol>
+
+            <div id="q4">
+                <h3>4. How to create a plan</h3>
+                <p>To create a plan, navigate to the 'Create Plan' section from your dashboard. Provide a name and description for your plan, then submit it to start tracking.</p>
+                <a href="#section1">Return to Top</a> | <a href="{{ url_for('dashboard') }}">Return to Dashboard</a> | <a href="{{ url_for('create_plan_page') }}">Create a Plan</a>
+            </div>
+
+            <div id="q5">
+                <h3>5. Why create a plan</h3>
+                <p>A plan helps you define your goals, break them into manageable steps, and track your progress. It is an essential tool for staying organized and motivated in both personal and financial goals.</p>
+                <a href="#section1">Return to Top</a> | <a href="{{ url_for('dashboard') }}">Return to Dashboard</a> | <a href="{{ url_for('create_plan_page') }}">Create a Plan</a>
+            </div>
+
+            <div id="q6">
+                <h3>6. What can a plan do</h3>
+                <p>A plan allows you to organize tasks, set deadlines, and monitor progress towards completing your goals. You can add multiple goals to a plan and track them individually.</p>
+                <a href="#section1">Return to Top</a> | <a href="{{ url_for('dashboard') }}">Return to Dashboard</a> | <a href="{{ url_for('create_plan_page') }}">Create a Plan</a>
+            </div>
+        </section>
+
+        <!-- Section 3: Goals -->
+        <section id="section3">
+            <h2>Section 3: Goals</h2>
+            <ol>
+                <li><a href="#q7">How to create a goal</a></li>
+                <li><a href="#q8">What can a goal do</a></li>
+            </ol>
+
+            <div id="q7">
+                <h3>7. How to create a goal</h3>
+                <p>To create a goal, go to the 'Create Goal' section of your plan. Set a specific target, description, and timeline. Once submitted, the goal will be tracked within your selected plan.</p>
+                <a href="#section1">Return to Top</a> | <a href="{{ url_for('dashboard') }}">Return to Dashboard</a> | <a href="{{ url_for('create_goal_page') }}">Create a Goal</a>
+            </div>
+
+            <div id="q8">
+                <h3>8. What can a goal do</h3>
+                <p>A goal allows you to track specific actions or achievements within a plan. Goals help break down large objectives into smaller, actionable steps, making it easier to measure progress.</p>
+                <a href="#section1">Return to Top</a> | <a href="{{ url_for('dashboard') }}">Return to Dashboard</a> | <a href="{{ url_for('create_goal_page') }}">Create a Goal</a>
+            </div>
+        </section>
+    </div>
+{% endblock %}
