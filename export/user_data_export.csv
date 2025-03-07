@@ -1,0 +1,6 @@
+plan_id,user_id,name,description,created_at,first_name,last_name,username,email,password_hash,date_of_birth
+1,15,Savings Plan,I want to save $10000 by end of the year,2025-02-10 20:15:22,Naveed,Mahmud,test2,test2@gmail.com,60303ae22b998861bce3b28f33eec1be758a213c86c93c076dbe9f558c11c752,1111-11-11
+3,15,Exercise Plan,I want to lose 30 pounds,2025-02-10 20:15:22,Naveed,Mahmud,test2,test2@gmail.com,60303ae22b998861bce3b28f33eec1be758a213c86c93c076dbe9f558c11c752,1111-11-11
+5,15,Savings Plan 3,This is to test the confirm button,2025-02-10 20:15:22,Naveed,Mahmud,test2,test2@gmail.com,60303ae22b998861bce3b28f33eec1be758a213c86c93c076dbe9f558c11c752,1111-11-11
+6,15,Plan 4,Test Undo,2025-02-10 20:15:22,Naveed,Mahmud,test2,test2@gmail.com,60303ae22b998861bce3b28f33eec1be758a213c86c93c076dbe9f558c11c752,1111-11-11
+8,15,IH6,Test,2025-02-10 20:15:22,Naveed,Mahmud,test2,test2@gmail.com,60303ae22b998861bce3b28f33eec1be758a213c86c93c076dbe9f558c11c752,1111-11-11
