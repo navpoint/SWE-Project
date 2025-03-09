@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+
+{% block title %}Goal Details{% endblock %}
+
+{% block content %}
+
+<div class="container">
+    <p><strong>Your User ID:</strong> <span id="userIdLabel">{{ user_id }}</span></p>
+    <p><strong>Username:</strong> <span id="usernameLabel">{{ username }}</span></p>
+    <p><strong>First Name:</strong> <span id="firstNameLabel">{{ first_name }}</span></p>
+
+    <input type="hidden" id="hiddenUserId" value="{{ user_id }}">
+    <input type="hidden" id="hiddenGoalId" value="{{ goal.goal_id }}">
+
+    <h1>{{ goal.name }}</h1>
+    <p><strong>Description:</strong> {{ goal.description }}</p>
+
+    <!-- Events Section -->
+    <h2>Events</h2>
+    <div id="events-section">
+        <p id="no-events-message">None Added</p>
+        <table border="1" id="events-table" style="display: none;">
+            <thead><tr><th>Date</th><th>Description</th></tr></thead>
+            <tbody id="events-table-body"></tbody>
+        </table>
+    </div>
+    <p><a id="addEventLink" href="#">➕ Add Event</a></p>
+
+    <hr> <!-- Adds a visual divider -->
+
+    <!-- Habits Section -->
+    <h2>Habits</h2>
+    <div id="habits-section">
+        <p id="no-habits-message">None Added</p>
+        <table border="1" id="habits-table" style="display: none;">
+            <thead><tr><th>Name</th><th>Description</th><th>Last Updated</th></tr></thead>
+            <tbody id="habits-table-body"></tbody>
+        </table>
+    </div>
+    <p><a id="addHabitLink" href="#">➕ Add Habit</a></p>
+
+    <br>
+    <a id="backToDashboardLink" href="/dashboard?user_id={{ user_id }}">Back to Dashboard</a>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    console.log("✅ JavaScript loaded on goals.html");
+
+    const userId = document.getElementById("hiddenUserId").value;
+    const goalId = document.getElementById("hiddenGoalId").value;
+
+    console.log("🔹 Fetching data from object service...");
+
+    // ✅ Fetch data from object service
+    fetch(`http://127.0.0.1:5002/get-goal-details?goal_id=${goalId}&user_id=${userId}`)
+        .then(response => response.json())
+        .then(data => {
+            console.log("✅ Goal data:", data);
+
+            // ✅ Populate Events
+            const eventsTable = document.querySelector("#events-table tbody");
+            const noEventsMessage = document.getElementById("no-events-message");
+            if (data.events.length > 0) {
+                eventsTable.innerHTML = "";
+                data.events.forEach(event => {
+                    let row = `<tr><td>${event.event_date}</td><td>${event.description}</td></tr>`;
+                    eventsTable.innerHTML += row;
+                });
+                document.getElementById("events-table").style.display = "block";
+                noEventsMessage.style.display = "none";
+            } else {
+                noEventsMessage.style.display = "block";
+            }
+
+            // ✅ Populate Habits
+            const habitsTable = document.querySelector("#habits-table tbody");
+            const noHabitsMessage = document.getElementById("no-habits-message");
+            if (data.habits.length > 0) {
+                habitsTable.innerHTML = "";
+                data.habits.forEach(habit => {
+                    let row = `<tr><td>${habit.name}</td><td>${habit.description}</td><td>${habit.timestamp}</td></tr>`;
+                    habitsTable.innerHTML += row;
+                });
+                document.getElementById("habits-table").style.display = "block";
+                noHabitsMessage.style.display = "none";
+            } else {
+                noHabitsMessage.style.display = "block";
+            }
+        })
+        .catch(error => console.error("❌ Error fetching goal details:", error));
+
+    // ✅ Update "Add Event" and "Add Habit" links
+    document.getElementById("addEventLink").href = `/add-event/${goalId}?user_id=${userId}`;
+    document.getElementById("addHabitLink").href = `/add-habit/${goalId}?user_id=${userId}`;
+});
+</script>
+
+{% endblock %}

@@ -220,6 +220,95 @@ def get_user_plans():
 
     return jsonify({"plans": plans})
 
+# ✅ Route to store a new event
+@app.route("/store-event", methods=["POST"])
+def store_event():
+    data = request.json
+    user_id = data.get("user_id")
+    goal_id = data.get("goal_id")
+    description = data.get("description")
+
+    if not user_id or not goal_id or not description:
+        return jsonify({"error": "Missing required fields"}), 400
+
+    database = get_db_connection()
+    cursor = database.cursor()
+
+    try:
+        cursor.execute("""
+            INSERT INTO events (user_id, goal_id, description, event_date) 
+            VALUES (%s, %s, %s, %s)
+        """, (user_id, goal_id, description, datetime.now()))
+
+        database.commit()
+        return jsonify({"success": True, "message": "Event stored successfully"})
+    except mysql.connector.Error as err:
+        return jsonify({"error": str(err)}), 500
+    finally:
+        cursor.close()
+        database.close()
+
+# ✅ Route to store a new habit
+@app.route("/store-habit", methods=["POST"])
+def store_habit():
+    data = request.json
+    user_id = data.get("user_id")
+    goal_id = data.get("goal_id") if "goal_id" in data else None  # goal_id is optional
+    name = data.get("name")
+    description = data.get("description")
+
+    if not user_id or not name:
+        return jsonify({"error": "Missing required fields"}), 400
+
+    database = get_db_connection()
+    cursor = database.cursor()
+
+    try:
+        cursor.execute("""
+            INSERT INTO habits (user_id, goal_id, name, description, timestamp) 
+            VALUES (%s, %s, %s, %s, %s)
+        """, (user_id, goal_id, name, description, datetime.now()))
+
+        database.commit()
+        return jsonify({"success": True, "message": "Habit stored successfully"})
+    except mysql.connector.Error as err:
+        return jsonify({"error": str(err)}), 500
+    finally:
+        cursor.close()
+        database.close()
+
+@app.route("/get-goal-details", methods=["GET"])
+def get_goal_details():
+    goal_id = request.args.get("goal_id")
+    user_id = request.args.get("user_id")
+
+    if not goal_id or not user_id:
+        return jsonify({"error": "Goal ID and User ID are required"}), 400
+
+    database = get_db_connection()
+    cursor = database.cursor(dictionary=True)
+
+    try:
+        print(f"🔍 Fetching events for goal_id: {goal_id}")
+        cursor.execute("SELECT description, event_date FROM events WHERE goal_id = %s", (goal_id,))
+        events = cursor.fetchall()
+        print(f"✅ Events found: {events}")
+
+        print(f"🔍 Fetching habits for goal_id: {goal_id}")
+        cursor.execute("SELECT name, description, timestamp FROM habits WHERE goal_id = %s", (goal_id,))
+        habits = cursor.fetchall()
+        print(f"✅ Habits found: {habits}")
+
+        return jsonify({
+            "events": events,
+            "habits": habits
+        })
+    except mysql.connector.Error as err:
+        return jsonify({"error": str(err)}), 500
+    finally:
+        cursor.close()
+        database.close()
+
 
 if __name__ == '__main__':
     app.run(port=5002, debug=True)

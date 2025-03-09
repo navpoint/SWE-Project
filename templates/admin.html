@@ -1,0 +1,68 @@
+<h1>Admin Control Panel</h1>
+
+<p>This page allows you to permanently delete a user. Enter the user’s ID and name, then confirm deletion.</p>
+
+<!-- Confirmation Message -->
+<p><div id="confirmationMessage" style="color: green; font-weight: bold;"></div></p>
+
+<!-- User ID & Username Input -->
+<label for="userIdInput">User ID:</label>
+<input type="number" id="userIdInput" required>
+
+<label for="userNameInput">Username:</label>
+<input type="text" id="userNameInput" required>
+
+<!-- Delete Button -->
+<button id="deleteUserButton">Delete User</button>
+
+<p id="deleteMessage"></p>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const deleteUserButton = document.getElementById("deleteUserButton");
+    const confirmationMessage = document.getElementById("confirmationMessage");
+
+    if (!deleteUserButton) {
+        console.error("❌ Button not found! Ensure the ID 'deleteUserButton' exists in admin.html.");
+        return;
+    }
+
+    deleteUserButton.addEventListener("click", function () {
+        const userId = document.getElementById("userIdInput").value;
+        const username = document.getElementById("userNameInput").value;
+
+        if (!userId || !username) {
+            alert("Please enter both User ID and Username.");
+            return;
+        }
+
+        if (!confirm(`Are you sure you want to delete user '${username}' (ID: ${userId})?`)) {
+            return;
+        }
+
+        fetch("http://127.0.0.1:5003/delete-user", { method: "POST",
+
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ user_id: userId, username: username })
+})
+
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                confirmationMessage.style.color = "red";
+                confirmationMessage.innerText = "❌ " + data.error;
+            } else {
+                confirmationMessage.style.color = "green";
+                confirmationMessage.innerText = "✅ " + data.message;
+                document.getElementById("userIdInput").value = "";
+                document.getElementById("userNameInput").value = "";
+            }
+        })
+        .catch(error => {
+            confirmationMessage.style.color = "red";
+            confirmationMessage.innerText = "❌ Error deleting user.";
+            console.error("Error:", error);
+        });
+    });
+});
+</script>

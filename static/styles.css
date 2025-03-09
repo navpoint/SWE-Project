@@ -133,3 +133,93 @@ button:hover {
     border-radius: 5px;
 }
 
+/* Super Table for Horizontal Layout */
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+td {
+    vertical-align: top;
+    padding: 15px;
+}
+
+/* Ensure Each Section is Properly Aligned */
+h3 {
+    text-align: center;
+    color: #4CAF50;
+}
+
+h4 {
+    margin-bottom: 5px;
+    font-size: 1em;
+    text-align: left;
+    color: #333;
+}
+
+/* Tables Inside the Sections */
+table {
+    width: 100%;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background-color: #fff;
+}
+
+table th, table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: center;
+}
+
+table th {
+    background-color: #e8f5e9;
+    font-weight: bold;
+}
+
+/* Adjust Current Savings Box */
+#currentSavingsInput {
+    width: 120px;
+    padding: 5px;
+    font-size: 1em;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    text-align: right;
+}
+
+/* Add Cash Flow Links */
+#addCashFlowTopLink, #addCashFlowBottomLink {
+    display: block;
+    margin: 10px auto;
+    font-size: 1.1em;
+    text-align: center;
+    color: #4CAF50;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+#addCashFlowTopLink:hover, #addCashFlowBottomLink:hover {
+    text-decoration: underline;
+}
+
+/* Budget Report Table */
+#budget-report {
+    margin-top: 15px;
+}
+
+#budget-report th {
+    background-color: #4CAF50;
+    color: white;
+}
+
+/* Back to Dashboard Link */
+#backToDashboardLink {
+    display: block;
+    margin-top: 15px;
+    text-align: center;
+    font-weight: bold;
+    color: #4CAF50;
+}
+
+#backToDashboardLink:hover {
+    text-decoration: underline;
+}

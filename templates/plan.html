@@ -1,0 +1,275 @@
+{% extends "base.html" %}
+
+{% block title %}Plan Details{% endblock %}
+
+{% block content %}
+<div class="container">
+    <p><strong>Your User ID:</strong> <span id="userIdLabel">{{ user_id }}</span></p>
+    <p><strong>Username:</strong> <span id="usernameLabel">{{ username }}</span></p>
+    <p><strong>First Name:</strong> <span id="firstNameLabel">{{ first_name }}</span></p>
+
+    <input type="label" id="hiddenUserId" value="{{ user_id }}">
+    <input type="label" id="hiddenPlanId" value="{{ plan.plan_id }}">
+
+    <h1>{{ plan.name }}</h1>
+    <p><strong>Description:</strong> {{ plan.description }}</p>
+
+    <h2>Current Savings: $
+        <input type="number" id="currentSavingsInput" value="0" step="0.01">
+    </h2>
+
+    {% if not cash_flows %}
+    <p>No cash flows yet.</p>
+    <p>
+        <a id="addCashFlowTopLink" href="/add-cash-flow/{{ plan.plan_id }}?user_id={{ user_id }}">➕ Add Cash Flow</a>
+    </p>
+    {% else %}
+    <p>
+        <a id="addCashFlowTopLink" href="/add-cash-flow/{{ plan.plan_id }}?user_id={{ user_id }}">➕ Add Cash Flow</a>
+    </p>
+    {% endif %}
+
+    <table style="width: 100%; border-collapse: collapse;">
+        <tr>
+            <!-- Incomes Section -->
+<!-- Incomes Section -->
+<td style="vertical-align: top; width: 33%;">
+    <h3>Incomes</h3>
+    <div id="income-section">
+        <p id="no-income-message">None Added</p>
+        <table border="1" id="income-table" style="display: none;">
+            <thead><tr><th>Amount</th><th>Category</th></tr></thead>
+            <tbody id="income-table-body"></tbody>  <!-- ✅ Added ID for tbody -->
+        </table>
+    </div>
+</td>
+
+<!-- Expenses Section -->
+<td style="vertical-align: top; width: 33%;">
+    <h3>Expenses</h3>
+    <div id="expense-section">
+        <p id="no-expense-message">None Added</p>
+        <table border="1" id="expense-table" style="display: none;">
+            <thead><tr><th>Amount</th><th>Category</th></tr></thead>
+            <tbody id="expense-table-body"></tbody>  <!-- ✅ Added ID for tbody -->
+        </table>
+    </div>
+</td>
+
+            
+            <!-- Budget Report Section -->
+            <td style="vertical-align: top; width: 33%;">
+                <h3>12-Month Budget Report</h3>
+                <table border="1">
+                    <thead><tr><th>Month</th><th>Projected Savings</th></tr></thead>
+                    <tbody id="budget-report"></tbody>
+                </table>
+            </td>
+        </tr>
+    </table>
+
+    <p>
+        <a id="addCashFlowBottomLink" href="/add-cash-flow/{{ plan.plan_id }}?user_id={{ user_id }}">➕ Add Cash Flow</a>
+    </p>
+
+    <br>
+    <a id="backToDashboardLink" href="/dashboard?user_id={{ user_id }}">Back to Dashboard</a>
+    
+    <div id="longTermEstimate">
+        <h3>Estimate Long-Term Savings</h3>
+    
+        <label for="estimate-month">Month:</label>
+        <select id="estimate-month">
+            <option value="1">January</option>
+            <option value="2">February</option>
+            <option value="3">March</option>
+            <option value="4">April</option>
+            <option value="5">May</option>
+            <option value="6">June</option>
+            <option value="7">July</option>
+            <option value="8">August</option>
+            <option value="9">September</option>
+            <option value="10">October</option>
+            <option value="11">November</option>
+            <option value="12">December</option>
+        </select>
+    
+        <label for="estimate-year">Year:</label>
+        <input type="number" id="estimate-year" min="2025" max="2050" value="2025">
+        
+        <button id="estimate-button">Estimate Long-Term Savings</button>
+    
+        <h4>Projected Savings for Selected Date:</h4>
+        <p id="estimated-savings">$0.00</p>
+    </div>
+    
+
+</div>
+
+    <p>
+        <a id="addCashFlowBottomLink" href="/add-cash-flow/{{ plan.plan_id }}?user_id={{ user_id }}">➕ Add Cash Flow</a>
+    </p>
+
+    <br>
+    <a id="backToDashboardLink" href="/dashboard?user_id={{ user_id }}">Back to Dashboard</a>
+
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        console.log("✅ JavaScript loaded on plan.html");
+    
+        const userId = document.getElementById("hiddenUserId").value;
+        const planId = document.getElementById("hiddenPlanId").value;
+        const currentSavingsInput = document.getElementById("currentSavingsInput");
+    
+        console.log("🔹 User ID:", userId, "Plan ID:", planId);
+    
+        function fetchAndUpdateReport() {
+            const currentSavings = parseFloat(currentSavingsInput.value) || 0;
+    
+            console.log("📡 Sending request to report service...");
+            fetch("http://127.0.0.1:5004/get-report", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    plan_id: planId,
+                    user_id: userId,
+                    current_savings: currentSavings
+                })
+            })
+            .then(response => {
+                console.log("📩 Raw response received:", response);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log("✅ Report data:", data);
+                updateIncomeExpenseTables(data.incomes, data.expenses);
+                updateBudgetReportTable(data.budget_report);
+            })
+            .catch(error => console.error("❌ Error fetching report:", error));
+        }
+    
+        function updateIncomeExpenseTables(incomes, expenses) {
+    console.log("📊 Updating income and expense tables...");
+
+    const incomeTableBody = document.getElementById("income-table-body");
+    const expenseTableBody = document.getElementById("expense-table-body");
+    const noIncomeMessage = document.getElementById("no-income-message");
+    const noExpenseMessage = document.getElementById("no-expense-message");
+
+    if (!incomeTableBody || !expenseTableBody) {
+        console.error("❌ Missing table elements in the HTML.");
+        return;
+    }
+
+    incomeTableBody.innerHTML = "";
+    expenseTableBody.innerHTML = "";
+
+    if (incomes.length > 0) {
+        incomes.forEach(income => {
+            let row = `<tr><td>$${income.amount.toFixed(2)}</td><td>${income.category}</td></tr>`;
+            incomeTableBody.innerHTML += row;
+        });
+        document.getElementById("income-table").style.display = "block";
+        noIncomeMessage.style.display = "none";
+    } else {
+        noIncomeMessage.style.display = "block";
+    }
+
+    if (expenses.length > 0) {
+        expenses.forEach(expense => {
+            let row = `<tr><td>$${expense.amount.toFixed(2)}</td><td>${expense.category}</td></tr>`;
+            expenseTableBody.innerHTML += row;
+        });
+        document.getElementById("expense-table").style.display = "block";
+        noExpenseMessage.style.display = "none";
+    } else {
+        noExpenseMessage.style.display = "block";
+    }
+}
+
+    
+        function updateBudgetReportTable(reportData) {
+            console.log("📊 Updating budget report table...");
+    
+            const budgetReport = document.getElementById("budget-report");
+            budgetReport.innerHTML = "";
+    
+            if (!reportData || reportData.length === 0) {
+                console.warn("⚠️ No budget report data received!");
+                budgetReport.innerHTML = "<tr><td colspan='2'>No Data Available</td></tr>";
+                return;
+            }
+    
+            reportData.forEach(entry => {
+                let row = `<tr><td>${entry.month}</td><td>$${entry.projected_savings.toFixed(2)}</td></tr>`;
+                budgetReport.innerHTML += row;
+            });
+    
+            console.log("✅ Budget report updated successfully!");
+        }
+    
+        // ✅ Fetch on page load and when Current Savings is updated
+        fetchAndUpdateReport();
+        if (currentSavingsInput) {
+            currentSavingsInput.addEventListener("input", fetchAndUpdateReport);
+        }
+    });
+
+    document.addEventListener("DOMContentLoaded", function () {
+    console.log("✅ JavaScript loaded on plan.html");
+
+    const estimateMonth = document.getElementById("estimate-month");
+    const estimateYear = document.getElementById("estimate-year");
+    const currentSavingsInput = document.getElementById("currentSavingsInput");
+    const estimateButton = document.getElementById("estimate-button");
+
+    // ✅ Check if elements exist
+    if (!estimateMonth || !estimateYear || !currentSavingsInput || !estimateButton) {
+        console.error("❌ One or more estimate input fields are missing from the HTML!");
+        return;
+    }
+
+    estimateButton.addEventListener("click", function () {
+        const userId = document.getElementById("hiddenUserId")?.value;
+        const planId = document.getElementById("hiddenPlanId")?.value;
+        const selectedMonth = estimateMonth.value;
+        const selectedYear = estimateYear.value;
+        const currentSavings = parseFloat(currentSavingsInput.value) || 0;
+
+        console.log("📡 Sending request for long-term estimate...", {
+            user_id: userId,
+            plan_id: planId,
+            selected_month: selectedMonth,
+            selected_year: selectedYear,
+            current_savings: currentSavings
+        });
+
+        fetch("http://127.0.0.1:5004/estimate-long-term", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                user_id: userId,
+                plan_id: planId,
+                selected_month: parseInt(selectedMonth),
+                selected_year: parseInt(selectedYear),
+                current_savings: currentSavings
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log("📩 Received response:", data);
+            document.getElementById("estimated-savings").innerText = `$${parseFloat(data.projected_savings).toFixed(2)}`;
+        })
+        .catch(error => {
+            console.error("❌ Error fetching estimated savings:", error);
+            document.getElementById("estimated-savings").innerText = "Error retrieving data.";
+        });
+    });
+});
+    </script>
+    
+{% endblock %}

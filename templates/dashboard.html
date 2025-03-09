@@ -4,7 +4,7 @@
 
 {% block content %}
     <div class="container">
-        <h1>Welcome to Your Dashboard</h1>
+        <h1>Welcome to Your Dashboard</h1>  <!-- ✅ Rolled back username display -->
 
         <h2>Your Plans</h2>
         <table id="plans-table" border="1">
@@ -21,8 +21,6 @@
             </tbody>
         </table>
 
-        <!-- <a href="/create-plan">Create New Plan</a> destroy later -->
-
         <h2>Your Goals</h2>
         <table id="goals-table" border="1">
             <thead>
@@ -38,29 +36,73 @@
                 </tr>
             </tbody>
         </table>
-        <br>
-        <a href="/create-plan">Create New Plan</a> <br>
-        <a href="/create-goal">Create New Goal</a>
 
+        <br>
+        <a id="createPlanLink">Create New Plan</a> <br>
+        <a id="createGoalLink">Create New Goal</a>
+        
         <br><br>
+
+        <!-- Undo Buttons -->
+        <button id="undo-plan-button" style="display:none;">Undo Last Plan</button>
+        <button id="undo-goal-button" style="display:none;">Undo Last Goal</button>
+        <br><br>
+
+<!-- User ID Display -->
+<p><strong>Your User ID:</strong> <span id="userIdLabel"></span></p>
+<!-- Export Data Button -->
+<button id="exportDataBtn">Export Data</button>
+<br><br>
+
+
         <a href="/logout">Log Out</a>
     </div>
 
-    <script>
+<!-- Begin Script -->
+<script>
+        document.getElementById("exportDataBtn").addEventListener("click", function () {
+    let userId = document.getElementById("userIdLabel").textContent.trim(); // ✅ Use textContent
+
+    if (!userId) {
+        alert("Error: No user ID found!");
+        return;
+    }
+
+    if (confirm("Are you sure you want to download the data?")) {
+        fetch("/export-data", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ user_id: userId })  // ✅ Send user ID correctly
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert("Data export started! Your CSV file is ready.");
+                window.location.href = "/download-csv";  // ✅ Redirect for download
+            } else {
+                alert("Error: " + data.error);
+            }
+        })
+        .catch(error => alert("Error: " + error));
+    }
+});
+
+
+
         // Assume planId and goalId are passed as context variables from Flask
-        var planId = "{{ plan_id }}";  // Set this dynamically in Flask
-        var goalId = "{{ goal_id }}";  // Set this dynamically in Flask
+        var planId = "{{ plan_id }}";  // Set dynamically in Flask
+        var goalId = "{{ goal_id }}";  // Set dynamically in Flask
 
         // Show undo buttons if a plan or goal was just created
         if (planId) {
-            document.getElementById('plan-undo-button').style.display = 'block';
+            document.getElementById('undo-plan-button').style.display = 'block';
         }
         if (goalId) {
-            document.getElementById('goal-undo-button').style.display = 'block';
+            document.getElementById('undo-goal-button').style.display = 'block';
         }
 
         // Undo plan creation
-        document.getElementById('undo-plan-button').onclick = function() {
+        document.getElementById('undo-plan-button').addEventListener("click", function() {
             fetch('/undo-plan', {
                 method: 'POST',
                 headers: {
@@ -71,13 +113,13 @@
             .then(response => response.json())
             .then(data => {
                 alert(data.message);
-                document.getElementById('plan-undo-button').style.display = 'none';  // Hide the button after deletion
+                document.getElementById('undo-plan-button').style.display = 'none';  // Hide after undo
             })
             .catch(error => alert('Error: ' + error));
-        };
+        });
 
         // Undo goal creation
-        document.getElementById('undo-goal-button').onclick = function() {
+        document.getElementById('undo-goal-button').addEventListener("click", function() {
             fetch('/undo-goal', {
                 method: 'POST',
                 headers: {
@@ -88,11 +130,76 @@
             .then(response => response.json())
             .then(data => {
                 alert(data.message);
-                document.getElementById('goal-undo-button').style.display = 'none';  // Hide the button after deletion
+                document.getElementById('undo-goal-button').style.display = 'none';  // Hide after undo
             })
             .catch(error => alert('Error: ' + error));
-        };
+        });
+
+        document.addEventListener("DOMContentLoaded", function () {
+    // Retrieve user ID from sessionStorage
+    const userId = sessionStorage.getItem("user_id");
+
+    if (userId) {
+        document.getElementById("userIdLabel").textContent = userId;
+    } else {
+        console.error("Error: No user ID found in session.");
+    }
+});
+/*document.addEventListener("DOMContentLoaded", function () {
+    const userId = sessionStorage.getItem("user_id");
+
+    if (userId) {
+        document.getElementById("userIdLabel").textContent = userId;
+
+        // ✅ Dynamically add user ID to URLs
+        document.getElementById("createPlanLink").href = `/create-plan?user_id=${userId}`;
+        document.getElementById("createGoalLink").href = `/create-goal?user_id=${userId}`;
+    } else {
+        console.error("Error: No user ID found in session.");
+    }
+});*/
+
+document.addEventListener("DOMContentLoaded", function () {
+    const userId = sessionStorage.getItem("user_id");
+
+    if (!userId) {
+        console.error("Error: No user ID found in session.");
+        return;
+    }
+
+    document.getElementById("userIdLabel").textContent = userId;
+
+    // ✅ Dynamically add user ID to "Create New" URLs
+    document.getElementById("createPlanLink").href = `/create-plan?user_id=${userId}`;
+    document.getElementById("createGoalLink").href = `/create-goal?user_id=${userId}`;
+
+    // ✅ Fetch plans from the backend
+    fetch(`/get-plans?user_id=${userId}`)
+        .then(response => response.json())
+        .then(plans => {
+            const plansTable = document.querySelector("#plans-table tbody");
+            plansTable.innerHTML = "";  // Clear loading message
+
+            if (plans.length === 0) {
+                plansTable.innerHTML = `<tr><td colspan="2">No plans found.</td></tr>`;
+                return;
+            }
+
+            plans.forEach(plan => {
+                const row = document.createElement("tr");
+                row.innerHTML = `
+                    <td><a href="/plan/${plan.plan_id}?user_id=${userId}">${plan.name}</a></td>
+                    <td>${plan.description}</td>
+                `;
+                plansTable.appendChild(row);
+            });
+        })
+        .catch(error => {
+            console.error("❌ Error fetching plans:", error);
+        });
+});
+
     </script>
-    
+
     <script src="{{ url_for('static', filename='dashboard.js') }}"></script>
 {% endblock %}

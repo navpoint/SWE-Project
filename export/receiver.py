@@ -2,6 +2,7 @@ import zmq
 import csv
 import json
 import mysql.connector
+import time
 
 # Establish the ZeroMQ context
 context = zmq.Context()
@@ -31,11 +32,16 @@ def generate_csv(user_id):
     if not user_data:
         return "No data found for this user ID. Please try again."
     
-    with open("user_data_export.csv", mode="w", newline="") as csv_file:
+    file_path = "user_data_export.csv"
+
+    with open(file_path, mode="w", newline="") as csv_file:
         write_csv = csv.DictWriter(csv_file, fieldnames=user_data[0].keys())
         write_csv.writeheader()
         write_csv.writerows(user_data)
     
+    #wait until file is ready
+    time.sleep(1)
+
     return "File successfully received!"
 
 while True:

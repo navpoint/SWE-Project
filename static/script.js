@@ -14,7 +14,7 @@ document.addEventListener("DOMContentLoaded", function () {
             console.log("🔹 Sending login request...", { username, password });
 
             try {
-                const response = await fetch("http://127.0.0.1:5001/login", {
+                const response = await fetch("http://127.0.0.1:5003/login", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ username, password })
@@ -78,7 +78,7 @@ document.addEventListener("DOMContentLoaded", function () {
             console.log("🔹 Sending signup request...", userData);
 
             try {
-                const response = await fetch("http://127.0.0.1:5001/register", {
+                const response = await fetch("http://127.0.0.1:5003/register", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify(userData)

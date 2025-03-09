@@ -1,11 +1,12 @@
 <!-- navbar.html -->
 <nav class="navbar">
     <ul>
-        <a href="{{ url_for('index') }}">Home</a>
-        <a href="{{ url_for('help_page') }}">Help</a>
-        <a href="{{ url_for('faq') }}">FAQ</a>  <!-- New link to FAQ page -->
+        <li><a href="{{ url_for('index') }}">Home</a></li>
+        <li><a href="{{ url_for('help_page') }}">Help</a></li>
+        <li><a href="{{ url_for('faq') }}">FAQ</a></li>  <!-- FAQ Page -->
         <li><a href="#">About</a></li>
         <li><a href="#">Contact</a></li>
         <li><a href="#">Profile</a></li>
+        <li><a href="{{ url_for('admin_page') }}">Admin Panel</a></li>  <!-- ✅ Admin Link Added -->
     </ul>
 </nav>

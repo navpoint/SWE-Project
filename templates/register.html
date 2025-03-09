@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register</title>
+</head>
+<body>
+    <h2>Create Account</h2>
+    <form id="registerForm">
+        <input type="text" id="first_name" placeholder="First Name" required><br>
+        <input type="text" id="last_name" placeholder="Last Name"><br>
+        <input type="text" id="username" placeholder="Username" required><br>
+        <input type="email" id="email" placeholder="Email" required><br>
+        <input type="password" id="password" placeholder="Password" required><br>
+        <input type="date" id="dob" placeholder="Date of Birth"><br>
+        <button type="submit">Register</button>
+    </form>
+    <p>Already have an account? <a href="{{ url_for('index') }}" id="loginLink">Login</a></p>
+
+    <script>
+        document.getElementById("registerForm").addEventListener("submit", function(event) {
+            event.preventDefault();
+
+            const data = {
+                first_name: document.getElementById("first_name").value,
+                last_name: document.getElementById("last_name").value,
+                username: document.getElementById("username").value,
+                email: document.getElementById("email").value,
+                password: document.getElementById("password").value,
+                dob: document.getElementById("dob").value
+            };
+
+            fetch("/register", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    window.location.href = "/dashboard";  // Redirect to dashboard after registration
+                } else {
+                    alert(data.error || "Registration failed");
+                }
+            });
+        });
+
+        document.getElementById("loginLink").addEventListener("click", function(event) {
+            if (document.getElementById("username").value || document.getElementById("email").value) {
+                event.preventDefault();
+                if (confirm("Are you sure you want to leave this page? Unsaved changes will be lost.")) {
+                    window.location.href = "/login";
+                }
+            }
+        });
+    </script>
+</body>
+</html>
